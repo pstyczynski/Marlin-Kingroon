@@ -1,0 +1,38 @@
+name: Build Marlin for Kingroon KP3S Pro
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Bump Date (bugfix-2.1.x)
+      run: |
+        # Inline Bump Script
+        if [[ ! "$( git log -1 --pretty=%B )" =~ ^\[cron\] ]]; then
+          DIST=$( date +"%Y-%m-%d" )
+          eval "sed -E -i 's/(#define +STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/src/inc/Version.h" && \
+          eval "sed -E -i 's/(#define +STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/Version.h" && \
+        fi
+        exit 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install PlatformIO
+      run: pip install platformio
+
+    - name: Run PlatformIO Build for Kingroon KP3S Pro
+      run: platformio run --silent -e mks_robin_nano_v1v2
+
+    - name: Upload Firmware Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: Firmware-MKS-Robin-Nano-V3.5
+        path: .pio/build/mks_robin_nano_v1v2/*.bin
