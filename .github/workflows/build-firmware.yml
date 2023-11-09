@@ -31,8 +31,12 @@ jobs:
     - name: Run PlatformIO Build for Kingroon KP3S Pro
       run: platformio run --silent -e mks_robin_nano_v1v2
 
+    - name: Rename Binary
+      run: mv .pio/build/mks_robin_nano_v1v2/Robin_nano35.bin .pio/build/mks_robin_nano_v1v2/robin_nano.bin
+
+
     - name: Upload Firmware Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: Firmware-MKS-Robin-Nano-V3.5
-        path: .pio/build/mks_robin_nano_v1v2/*.bin
+        name: Firmware-MKS-Kingroon-KP3S-Pro
+        path: .pio/build/mks_robin_nano_v1v2/robin_nano.bin
